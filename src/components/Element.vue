@@ -50,26 +50,26 @@ const gridClasses = computed(() =>
 {
     if(props.elem.number > 57 && props.elem.number <= 71)
     {
-        return gridData.rows[9] + ' ' + gridData.cols[(props.elem.number - 54) - 1];
+        return gridData.rows[10] + ' ' + gridData.cols[(props.elem.number - 54) - 1];
     }
     else if(props.elem.number > 89 && props.elem.number <= 103)
     {
-        return gridData.rows[10] + ' ' + gridData.cols[(props.elem.number - 88) + 1];
+        return gridData.rows[11] + ' ' + gridData.cols[(props.elem.number - 88) + 1];
     }
     return gridData.rows[props.elem.period] + ' ' + gridData.cols[props.elem.group];
 }); 
 </script>
 
 <template>
-    <div class="p-1 m-0.5 border-2 row-span-1 col-span-1 text-center hover:opacity-75 cursor-pointer" :title="elem.name" :class="[gridClasses, {'bg-purple-400 border-purple-700 text-white': props.elem.category.includes('noble gas'), 'bg-yellow-400 border-yellow-700 text-black': props.elem.category.includes('nonmetal'), 'bg-blue-400 border-blue-700 text-black': props.elem.category.includes('transition metal'), 'bg-violet-400 border-violet-700 text-white': props.elem.category.includes('alkaline'), 'bg-indigo-400 border-indigo-700 text-white': props.elem.category.includes('alkali '), 'bg-red-400 border-red-700 text-white': props.elem.category.includes('metalloid'), 'bg-gray-400 border-gray-700 text-black': props.elem.category.includes('lanthanide'), 'bg-brown-400 border-brown-700 text-black': props.elem.category.includes('actinide')}]">
+    <div class="pt-cell row-span-1 col-span-1" :title="elem.name" :class="[gridClasses, {'bg-purple-400 border-purple-700 text-white': props.elem.category.includes('noble gas'), 'bg-yellow-400 border-yellow-700 text-black': props.elem.category.includes('nonmetal'), 'bg-blue-400 border-blue-700 text-black': props.elem.category.includes('transition metal'), 'bg-violet-400 border-violet-700 text-white': props.elem.category.includes('alkaline'), 'bg-indigo-400 border-indigo-700 text-white': props.elem.category.includes('alkali '), 'bg-red-400 border-red-700 text-white': props.elem.category.includes('metalloid'), 'bg-gray-400 border-gray-700 text-black': props.elem.category.includes('lanthanide'), 'bg-brown-400 border-brown-700 text-black': props.elem.category.includes('actinide')}]">
         <div class="flex flex-col">
-            <small class="text-xs self-start font-black">{{ elem.number }}</small>
-            <div class="flex flex-row justify-between">
-                <small class="-rotate-90 text-xs text-center">{{ elem.electronegativity_pauling }}</small>
-                <h1 class="text-base p-0 m-0">{{ elem.symbol }}</h1>
-                <small class="rotate-90 text-xs mr-0.5">Td</small>
+            <small class="pt-num self-start">{{ elem.number }}</small>
+            <div class="pt-mid">
+                <small class="pt-side pt-side--up">{{ elem.electronegativity_pauling }}</small>
+                <span class="pt-sym">{{ elem.symbol }}</span>
+                <small class="pt-side">Td</small>
             </div>
-            <small class="text-xs">{{ parseFloat(elem.atomic_mass).toFixed(2) }}</small>
+            <small class="pt-mass">{{ Number.isFinite(parseFloat(elem.atomic_mass)) ? parseFloat(elem.atomic_mass).toFixed(2) : '' }}</small>
         </div>
     </div>
 </template>
