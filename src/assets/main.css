@@ -1,3 +1,119 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Establishes the query container the whole table scales from, and caps the
+     table's width so its 18 x 10.5 cell grid also fits the viewport height. */
+  .pt-scope {
+    container-type: inline-size;
+    margin-inline: auto;
+    width: min(100%, calc((100vh - 2rem) * 18 / 10.5));
+    width: min(100%, calc((100dvh - 2rem) * 18 / 10.5));
+  }
+
+  /* Rows 1-8 are the main block, then a half-height gutter, then the f-block. */
+  .pt-grid {
+    --cell: calc(100cqw / 18);
+    display: grid;
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+    grid-template-rows: repeat(8, var(--cell)) calc(var(--cell) * 0.5) repeat(2, var(--cell));
+  }
+
+  .pt-cell {
+    padding: calc(var(--cell) * 0.04);
+    border-width: max(1px, calc(var(--cell) * 0.02));
+    border-style: solid;
+    margin: calc(var(--cell) * 0.02);
+    overflow: hidden;
+    text-align: center;
+    cursor: pointer;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .pt-cell:hover {
+    opacity: 0.75;
+  }
+
+  /* Fixed-height middle band so the vertical side labels can never push the
+     symbol out of the tile. */
+  .pt-mid {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(var(--cell) * 0.46);
+    overflow: hidden;
+  }
+
+  .pt-num {
+    font-size: clamp(5px, calc(var(--cell) * 0.20), 14px);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .pt-sym {
+    font-size: clamp(8px, calc(var(--cell) * 0.34), 30px);
+    line-height: 1.1;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .pt-mass {
+    font-size: clamp(4px, calc(var(--cell) * 0.16), 12px);
+    line-height: 1;
+  }
+
+  /* writing-mode rather than a rotate() transform: a transform is paint-only and
+     still reserves its pre-rotation box, which is what clipped these labels. */
+  .pt-side {
+    font-size: clamp(4px, calc(var(--cell) * 0.15), 11px);
+    line-height: 1;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    flex: 0 0 auto;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .pt-side--up {
+    transform: rotate(180deg);
+  }
+}
+
+@supports not (container-type: inline-size) {
+  .pt-grid {
+    --cell: calc(100vw / 18);
+  }
+}
+
+@container (max-width: 1000px) {
+  .pt-side {
+    display: none;
+  }
+}
+
+@container (max-width: 520px) {
+  .pt-mass {
+    display: none;
+  }
+}
+
+@container (max-width: 380px) {
+  .pt-num {
+    display: none;
+  }
+}

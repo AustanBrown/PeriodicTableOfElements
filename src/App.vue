@@ -49,45 +49,73 @@ const displayElementDialog = element =>
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
-              class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+              class="w-full max-w-md sm:max-w-lg transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all max-h-[85dvh] overflow-y-auto"
             >
-              <DialogTitle
-                as="h3"
-                class="text-lg font-medium leading-6 text-gray-900"
-              >
-                {{ state.activeElement.name }} ({{ state.activeElement.symbol }})
-              </DialogTitle>
-              <div class="mt-2">
-                <p class="text-sm text-gray-500">
-                  Name: {{ state.activeElement.name }} <br/>
-                  Atomic Mass: {{ state.activeElement.atomic_mass }} <br/>
-                  Boiling Point: {{ state.activeElement.boil }} K <br/>
-                  Melting Point: {{ state.activeElement.melt }} K <br/>
-                  Electronegativity: {{ state.activeElement.electronegativity_pauling }} <br/>
-                  Discovered By: {{ state.activeElement.discovered_by }} <br/>
-                  Summary: {{ state.activeElement.summary }} <br/><br/>
-                  Source: <a :href="state.activeElement.source">Wikipedia</a><br/>
-                </p>
-              </div>
-
-              <div class="mt-4">
-                <button
-                  type="button"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  @click="toggleDialogOpen"
+              <template v-if="state.activeElement">
+                <DialogTitle
+                  as="h3"
+                  class="text-base sm:text-lg font-medium leading-6 text-gray-900"
                 >
-                  Ok
-                </button>
-              </div>
+                  {{ state.activeElement.name }} ({{ state.activeElement.symbol }})
+                </DialogTitle>
+                <div class="mt-2">
+                  <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm sm:text-base text-gray-500">
+                    <dt class="font-semibold text-gray-700">Name</dt>
+                    <dd>{{ state.activeElement.name }}</dd>
+
+                    <dt class="font-semibold text-gray-700">Atomic Mass</dt>
+                    <dd>{{ state.activeElement.atomic_mass ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700">Boiling Point (K)</dt>
+                    <dd>{{ state.activeElement.boil ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700">Melting Point (K)</dt>
+                    <dd>{{ state.activeElement.melt ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700">Electronegativity</dt>
+                    <dd>{{ state.activeElement.electronegativity_pauling ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700">Discovered By</dt>
+                    <dd>{{ state.activeElement.discovered_by ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700 self-start">Summary</dt>
+                    <dd>{{ state.activeElement.summary ?? '—' }}</dd>
+
+                    <dt class="font-semibold text-gray-700 self-start">Source</dt>
+                    <dd>
+                      <a
+                        v-if="state.activeElement.source"
+                        :href="state.activeElement.source"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 underline hover:text-blue-800"
+                      >Wikipedia</a>
+                      <span v-else>—</span>
+                    </dd>
+                  </dl>
+                </div>
+
+                <div class="mt-4">
+                  <button
+                    type="button"
+                    class="inline-flex w-full sm:w-auto justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    @click="toggleDialogOpen"
+                  >
+                    Ok
+                  </button>
+                </div>
+              </template>
             </DialogPanel>
           </TransitionChild>
         </div>
       </div>
     </Dialog>
   </TransitionRoot>
-    <div class="h-screen w-screen">
-      <div class="grid grid-cols-18 grid-rows-9">
-        <Element v-for="el in state.elements" v-bind:elem="el" @click="displayElementDialog(el)"/>
+    <div class="w-full min-h-screen flex flex-col items-center justify-center p-2 sm:p-4">
+      <div class="pt-scope">
+        <div class="pt-grid">
+          <Element v-for="el in state.elements" :key="el.number" :elem="el" @click="displayElementDialog(el)"/>
+        </div>
       </div>
     </div>
 </template>
