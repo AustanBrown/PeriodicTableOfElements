@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Periodic Table of Elements">
+  <title>Periodic Table of Elements</title>
+
+  <defs>
+    <!-- App background: violet -> blue -> cyan -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0"    stop-color="#5B21B6"/>
+      <stop offset="0.45" stop-color="#3B4FE0"/>
+      <stop offset="1"    stop-color="#06B6D4"/>
+    </linearGradient>
+
+    <!-- Soft top-left sheen -->
+    <radialGradient id="sheen" cx="0.24" cy="0.16" r="0.85">
+      <stop offset="0"   stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="0.6" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="1"   stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Element card face -->
+    <linearGradient id="card" x1="512" y1="152" x2="512" y2="872" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E6EDF9"/>
+    </linearGradient>
+
+    <!-- Accent stripe across the top of the card -->
+    <linearGradient id="stripe" x1="176" y1="0" x2="848" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F59E0B"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Plain Gaussian blur: portable across renderers (feDropShadow is not) -->
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+
+    <clipPath id="squircle">
+      <rect x="0" y="0" width="1024" height="1024" rx="224" ry="224"/>
+    </clipPath>
+    <clipPath id="cardClip">
+      <rect x="176" y="152" width="672" height="720" rx="72" ry="72"/>
+    </clipPath>
+  </defs>
+
+  <!-- Rounded-square background -->
+  <g clip-path="url(#squircle)">
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#bg)"/>
+
+    <rect x="0" y="0" width="1024" height="1024" fill="url(#sheen)"/>
+
+    <!-- Cast shadow of the card -->
+    <rect x="176" y="176" width="672" height="720" rx="72" ry="72"
+          fill="#0A0F2C" fill-opacity="0.42" filter="url(#softShadow)"/>
+  </g>
+
+  <!-- Element tile -->
+  <rect x="176" y="152" width="672" height="720" rx="72" ry="72" fill="url(#card)"/>
+
+  <g clip-path="url(#cardClip)">
+    <rect x="176" y="152" width="672" height="28" fill="url(#stripe)"/>
+  </g>
+
+  <rect x="176" y="152" width="672" height="720" rx="72" ry="72"
+        fill="none" stroke="#0F172A" stroke-opacity="0.12" stroke-width="6"/>
+
+  <!-- Tile typography -->
+  <g font-family="Inter Display, Inter, Helvetica Neue, Helvetica, Arial, sans-serif" fill="#0F172A">
+    <!-- Atomic number -->
+    <text x="240" y="342" font-size="118" font-weight="700" fill="#1D4ED8" letter-spacing="-2">78</text>
+
+    <!-- Element symbol: the thing that has to read at 16px -->
+    <text x="512" y="646" font-size="352" font-weight="800" text-anchor="middle" letter-spacing="-14">Pt</text>
+
+    <!-- Element name -->
+    <text x="512" y="748" font-size="80" font-weight="600" text-anchor="middle" fill="#334155" letter-spacing="-1">Platinum</text>
+
+    <!-- Atomic mass -->
+    <text x="512" y="826" font-size="60" font-weight="500" text-anchor="middle" fill="#64748B">195.08</text>
+  </g>
+</svg>

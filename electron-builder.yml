@@ -1,0 +1,45 @@
+appId: com.austanbrown.periodictableofelements
+productName: Periodic Table of Elements
+copyright: Copyright © AustanBrown
+
+directories:
+  output: release
+  buildResources: build
+
+# The Vue app is bundled into dist/ by `vite build`; the element JSON is inlined
+# into that bundle, so nothing from data/ needs shipping separately.
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Education
+  icon: build/icon.png
+  synopsis: A periodic table of the elements
+  # Required by the .deb target; change this to your own contact address.
+  maintainer: AustanBrown <AustanBrown@users.noreply.github.com>
+  # Lets desktop environments associate the running window with the .desktop entry.
+  syncDesktopName: true
+  desktop:
+    entry:
+      Keywords: chemistry;science;elements;periodic table;
+
+win:
+  target:
+    - nsis
+  icon: build/icon.png
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+
+mac:
+  target:
+    - dmg
+  category: public.app-category.education
+  icon: build/icon.png
