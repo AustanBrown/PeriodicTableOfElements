@@ -6,6 +6,21 @@ directories:
   output: release
   buildResources: build
 
+# Where `electron-builder --publish` uploads to, and where the app's updater looks.
+# Stated explicitly rather than inferred from the git remote, which breaks in CI and
+# in source tarballs. Releases are drafts: electron-updater ignores those, so users
+# are never offered a build whose assets are still uploading.
+publish:
+  provider: github
+  owner: AustanBrown
+  repo: PeriodicTableOfElements
+  releaseType: draft
+
+# ${name} is the package name, which has no spaces. The default naming uses
+# productName, and the resulting space-to-dash substitution in the update metadata
+# no longer matched the files on disk.
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
+
 # The Vue app is bundled into dist/ by `vite build`; the element JSON is inlined
 # into that bundle, so nothing from data/ needs shipping separately.
 files:
@@ -41,5 +56,8 @@ nsis:
 mac:
   target:
     - dmg
+    # The macOS updater installs from a zip, never a dmg. Without this there is no
+    # artifact for latest-mac.yml to point at, and the check itself fails.
+    - zip
   category: public.app-category.education
   icon: build/icon.png

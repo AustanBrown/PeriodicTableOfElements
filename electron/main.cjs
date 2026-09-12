@@ -1,6 +1,8 @@
 const { app, BrowserWindow, Menu, shell, nativeImage } = require('electron');
 const path = require('node:path');
 
+const { initUpdater, checkForUpdates } = require('./updater.cjs');
+
 // Set by `npm run electron:dev` so the window points at Vite's dev server
 // instead of the built files in ./dist.
 const devServerUrl = process.env.VITE_DEV_SERVER_URL;
@@ -44,7 +46,14 @@ const createWindow = () =>
   });
 
   // Avoid the white flash while Vue mounts.
-  mainWindow.once('ready-to-show', () => mainWindow.show());
+  mainWindow.once('ready-to-show', () =>
+  {
+    mainWindow.show();
+
+    // Let the window finish painting before an update dialog parents itself to it.
+    setTimeout(() => checkForUpdates(), 3000);
+  });
+
   mainWindow.on('closed', () => { mainWindow = null; });
 
   if (isDev)
@@ -113,6 +122,11 @@ const buildMenu = () =>
       role: 'help',
       submenu: [
         {
+          label: 'Check for Updates…',
+          click: () => checkForUpdates({ silent: false })
+        },
+        { type: 'separator' },
+        {
           label: 'Project on GitHub',
           click: () => shell.openExternal('https://github.com/AustanBrown/PeriodicTableOfElements')
         }
@@ -140,6 +154,10 @@ else
   app.whenReady().then(() =>
   {
     buildMenu();
+
+    // The window is read lazily: macOS re-activate replaces it.
+    initUpdater({ getWindow: () => mainWindow, openExternally });
+
     createWindow();
 
     // macOS keeps the app alive after the last window closes.

@@ -1,11 +1,12 @@
 {
   "name": "periodic-table-elements",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "A periodic table of the elements, for the web and the desktop.",
   "author": "AustanBrown",
   "desktopName": "periodic-table-elements.desktop",
   "license": "MIT",
+  "repository": "https://github.com/AustanBrown/PeriodicTableOfElements",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
@@ -20,15 +21,19 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.14",
+    "electron-log": "^5.4.4",
+    "electron-updater": "^6.8.9",
+    "three": "^0.186.0",
     "vue": "^3.3.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-vue": "^5.2.4",
     "autoprefixer": "^10.4.14",
     "electron": "^43.4.1",
     "electron-builder": "^26.15.3",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.5"
+    "vite": "^6.4.3"
   }
 }
