@@ -4,8 +4,29 @@ import { Dialog, DialogPanel, DialogTitle, DialogDescription, TransitionRoot, Tr
 
 import data from '../data/PeriodicTableJSON.json';
 import Element from './components/Element.vue';
+import BohrModel from './components/BohrModel.vue';
 
-const state = reactive({elements: data['elements'], dialogOpen: false, activeElement: null});
+/**
+ * @typedef {Object} PeriodicElement
+ * @property {string} name
+ * @property {string} symbol
+ * @property {number} number
+ * @property {number} atomic_mass
+ * @property {number|null} boil
+ * @property {number|null} melt
+ * @property {number|null} electronegativity_pauling
+ * @property {string|null} discovered_by
+ * @property {string} summary
+ * @property {string} source
+ * @property {string|null} bohr_model_3d
+ */
+
+const state = reactive({
+  elements: data['elements'],
+  dialogOpen: false,
+  /** @type {PeriodicElement | null} */
+  activeElement: null
+});
 
 const toggleDialogOpen = () => 
 {
@@ -15,7 +36,6 @@ const toggleDialogOpen = () =>
 const displayElementDialog = element =>
 {
   state.activeElement = element;
-  //console.log(state.activeElement.symbol);
   toggleDialogOpen();
 }
 </script>
@@ -49,7 +69,7 @@ const displayElementDialog = element =>
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
-              class="w-full max-w-md sm:max-w-lg transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all max-h-[85dvh] overflow-y-auto"
+              class="w-full max-w-md sm:max-w-lg md:max-w-3xl transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all max-h-[85dvh] overflow-y-auto"
             >
               <template v-if="state.activeElement">
                 <DialogTitle
@@ -58,7 +78,7 @@ const displayElementDialog = element =>
                 >
                   {{ state.activeElement.name }} ({{ state.activeElement.symbol }})
                 </DialogTitle>
-                <div class="mt-2">
+                <div class="mt-2 grid gap-4 md:grid-cols-2 md:items-start">
                   <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm sm:text-base text-gray-500">
                     <dt class="font-semibold text-gray-700">Name</dt>
                     <dd>{{ state.activeElement.name }}</dd>
@@ -93,6 +113,12 @@ const displayElementDialog = element =>
                       <span v-else>—</span>
                     </dd>
                   </dl>
+
+                  <BohrModel
+                    :key="state.activeElement.number"
+                    :model-url="state.activeElement.bohr_model_3d"
+                    :label="state.activeElement.name"
+                  />
                 </div>
 
                 <div class="mt-4">
