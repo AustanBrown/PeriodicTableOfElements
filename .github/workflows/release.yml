@@ -1,0 +1,92 @@
+name: Build desktop apps
+
+# Pushing a v* tag builds all three platforms and uploads them to that version's
+# draft GitHub release. A manual run builds the same artifacts but keeps them as
+# workflow artifacts, unless you tick "publish".
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload to the draft GitHub release for this version
+        type: boolean
+        default: false
+
+# electron-builder creates and uploads to the release using GITHUB_TOKEN.
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+
+    strategy:
+      # Windows and macOS builds can only run on their own OS, so let the others
+      # finish even if one platform fails.
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux (AppImage + deb)
+            os: ubuntu-latest
+            flag: --linux
+          - name: Windows (NSIS)
+            os: windows-latest
+            flag: --win
+          - name: macOS (dmg + zip)
+            os: macos-latest
+            flag: --mac
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      # electron-builder names the release after package.json, not the tag, so a
+      # mismatch would quietly publish to the wrong version.
+      - name: Check the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $pkg"
+            exit 1
+          fi
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package
+        run: npx electron-builder ${{ matrix.flag }} --publish ${{ (startsWith(github.ref, 'refs/tags/v') || inputs.publish) && 'always' || 'never' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The macOS build is unsigned; without this electron-builder hunts for a
+          # signing identity and fails the job when it finds none.
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload installers as workflow artifacts
+        if: ${{ !(startsWith(github.ref, 'refs/tags/v') || inputs.publish) }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.os }}
+          if-no-files-found: ignore
+          path: |
+            release/*.AppImage
+            release/*.deb
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.yml
